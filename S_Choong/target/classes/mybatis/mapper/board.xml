@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- SAMPLE CUSTOM -->
+<mapper namespace="board">
+
+	<!-- WHERE -->
+	<sql id="baseWhere">
+		<if test="boardDelYn != null and boardDelYn != '' ">AND BOARD_DEL_YN = #{boardDelYn}</if>
+	</sql>
+
+	<!-- LIST -->
+	<select id="list" parameterType="vehicle.project.choong.service.form.BoardForm" resultType="vehicle.project.choong.service.dto.BoardDto">
+		SELECT
+			BOARD_SEQNO	-- 게시판일련번호
+			, BOARD_MENU	-- 게시판메뉴
+			, BOARD_P_SEQNO	-- 게시판상위일련번호
+			, BOARD_LEVEL	-- 게시판 레벨
+			, BOARD_SUBJECT	-- 게시판제목
+			, BOARD_CONTENT	-- 게시판내용
+			, BOARD_CNT	-- 조회수
+			, BOARD_WRITER	-- 작성자명
+			, BOARD_DEL_YN	-- 게시판삭제여부
+			, BOARD_IP	--  게시판아이피
+			, REGIST_ID	-- 작성자아이디
+			, REGIST_DATE	-- 게시판작성일
+		FROM
+			BOARD
+		WHERE
+			BOARD_SEQNO > 0
+		<include refid="baseWhere" />
+	</select>
+
+<insert id="insert" parameterType="vehicle.project.choong.service.form.BoardForm">
+		INSERT INTO BOARD (
+			  BOARD_MENU
+			, BOARD_P_SEQNO
+			, BOARD_LEVEL
+			, BOARD_SUBJECT
+			, BOARD_CONTENT
+			, BOARD_CNT
+			, BOARD_DEL_YN
+			, BOARD_IP
+			, REGIST_ID
+			, REGIST_DATE
+		) VALUES (
+			  #{boardMenu, jdbcType=VARCHAR}
+			, #{boardPSeqno, jdbcType=DECIMAL}
+			, #{boardLevel, jdbcType=DECIMAL}
+			, #{boardSubject, jdbcType=DECIMAL}
+			, #{boardContent, jdbcType=VARCHAR}
+			, 0
+			, 'N'
+			, #{boardIp, jdbcType=DECIMAL}
+			, 'admin'
+			, TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS')
+
+		)
+	</insert>
+	<!-- COUNT -->
+	<select id="count" parameterType="vehicle.project.choong.service.form.BoardForm" resultType="int">
+		SELECT
+			COUNT(0) AS COUNT
+		FROM
+			BOARD
+		<where>
+			<include refid="baseWhere" />
+		</where>
+	</select>
+
+</mapper>
